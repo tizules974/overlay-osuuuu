@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    width: 480px;
+    overflow: hidden;
+  }
+
+  .overlay {
+    background: #1a0a28;
+    border: 2px solid #ff4fa3;
+    border-radius: 16px;
+    padding: 12px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overlay::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 140px; height: 140px;
+    background: rgba(255,80,180,0.10);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .overlay::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 100px; height: 100px;
+    background: rgba(180,60,255,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* PROFIL ROW */
+  .profile-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,80,180,0.2);
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #ff4fa3;
+    background: #2d0a3d;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    color: #ff88dd;
+  }
+
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-info { flex: 1; min-width: 0; }
+
+  .profile-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 16px;
+    color: #ff88dd;
+  }
+
+  .profile-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 2px;
+  }
+
+  .profile-stat {
+    font-size: 10px;
+    color: rgba(255,180,240,0.6);
+  }
+
+  .profile-stat span {
+    color: #ffaaee;
+    font-weight: 700;
+  }
+
+  .level-wrap { text-align: right; flex-shrink: 0; }
+
+  .level-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 11px;
+    color: rgba(255,180,240,0.5);
+  }
+
+  .level-bar-bg {
+    width: 70px;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 3px;
+  }
+
+  .level-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #cc44ff, #ff44bb);
+    border-radius: 10px;
+  }
+
+  /* BEATMAP ROW */
+  .top-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .beatmap-info { flex: 1; min-width: 0; }
+
+  .song-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    color: #ff88dd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .song-artist {
+    font-size: 10px;
+    color: rgba(255,180,240,0.55);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .diff-badge {
+    background: rgba(255,80,180,0.2);
+    border: 1px solid #ff4fa3;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #ff99ee;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: 'Fredoka One', cursive;
+  }
+
+  /* STATS */
+  .stats-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .stat-box {
+    flex: 1;
+    background: rgba(255,80,180,0.07);
+    border: 1px solid rgba(255,80,180,0.25);
+    border-radius: 10px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: 8px;
+    color: rgba(255,180,240,0.45);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .stat-value {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    line-height: 1;
+    color: #ffaaee;
+  }
+
+  .stat-value.pp    { color: #ff66dd; font-size: 21px; }
+  .stat-value.combo { color: #cc88ff; }
+  .stat-value.acc   { color: #88ffcc; }
+
+  .grade {
+    font-family: 'Fredoka One', cursive;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .grade.SS { color: #ffdd55; }
+  .grade.S  { color: #ff99cc; }
+  .grade.A  { color: #88ff88; }
+  .grade.B  { color: #88ccff; }
+  .grade.C  { color: #ffaa55; }
+  .grade.D  { color: #ff5555; }
+
+  /* ACC BAR */
+  .acc-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: rgba(255,180,240,0.4);
+    margin-bottom: 4px;
+  }
+
+  .acc-bar-bg {
+    height: 5px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .acc-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #cc44ff, #ff44bb, #ff88dd);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    animation: pulse-bar 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-bar {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  .deco {
+    position: absolute;
+    font-size: 11px;
+    opacity: 0.18;
+    animation: float 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .deco.d1 { top: 8px;  right: 55px; animation-delay: 0s; }
+  .deco.d2 { top: 20px; right: 35px; animation-delay: 1s; }
+  .deco.d3 { bottom: 12px; right: 18px; animation-delay: 0.5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+</style>
+</head>
+<body>
+<div class="overlay">
+  <span class="deco d1">♥</span>
+  <span class="deco d2">✿</span>
+  <span class="deco d3">★</span>
+
+  <!-- PROFIL -->
+  <div class="profile-row">
+    <div class="avatar" id="avatar-wrap">
+      <img id="avatar-img" src="" alt="" style="display:none"/>
+      <span id="avatar-letter">P</span>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name" id="profile-name">Ptizizi974</div>
+      <div class="profile-stats">
+        <div class="profile-stat">PERF <span id="profile-pp">—</span></div>
+        <div class="profile-stat">ACC <span id="profile-acc">—</span></div>
+        <div class="profile-stat">RANK <span id="profile-rank">—</span></div>
+      </div>
+    </div>
+    <div class="level-wrap">
+      <div class="level-num">LV <span id="profile-level">—</span></div>
+      <div class="level-bar-bg">
+        <div class="level-bar-fill" id="level-bar" style="width:50%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEATMAP -->
+  <div class="top-row">
+    <div class="beatmap-info">
+      <div class="song-title" id="title">En attente d'osu!...</div>
+      <div class="song-artist" id="artist"></div>
+    </div>
+    <div class="diff-badge" id="stars">⭐ —</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-label">PP</div>
+      <div class="stat-value pp" id="pp">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Combo</div>
+      <div class="stat-value combo" id="combo">—</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">Accuracy</div>
+      <div class="stat-value acc" id="acc">—</div>
+    </div>
+    <div class="stat-box" style="flex:0.65">
+      <div class="stat-label">Grade</div>
+      <div class="grade S" id="grade">—</div>
+    </div>
+  </div>
+
+  <!-- ACC BAR -->
+  <div class="acc-bar-labels">
+    <span>accuracy</span>
+    <span id="acc-label">—</span>
+  </div>
+  <div class="acc-bar-bg">
+    <div class="acc-bar-fill" id="acc-bar" style="width:0%"></div>
+  </div>
+</div>
+
+<script>
+function connect() {
+  var ws = new WebSocket('ws://localhost:24050/websocket/v2');
+  ws.onmessage = function(e) {
+    try {
+      var d = JSON.parse(e.data);
+      var menu = d.menu, gp = d.gameplay, profile = d.profile;
+
+      // Profil
+      if (profile) {
+        var name = profile.name || 'Player';
+        document.getElementById('profile-name').textContent = name;
+        document.getElementById('avatar-letter').textContent = name.charAt(0).toUpperCase();
+        if (profile.pp) document.getElementById('profile-pp').textContent = Math.round(profile.pp) + 'pp';
+        if (profile.accuracy) document.getElementById('profile-acc').textContent = parseFloat(profile.accuracy).toFixed(2) + '%';
+        if (profile.rank && profile.rank.global) document.getElementById('profile-rank').textContent = '#' + profile.rank.global;
+        if (profile.level) {
+          document.getElementById('profile-level').textContent = Math.floor(profile.level);
+          var pct = (profile.level % 1) * 100;
+          document.getElementById('level-bar').style.width = pct + '%';
+        }
+        if (profile.userAvatar) {
+          var img = document.getElementById('avatar-img');
+          img.src = profile.userAvatar;
+          img.style.display = 'block';
+          document.getElementById('avatar-letter').style.display = 'none';
+        }
+      }
+
+      // Beatmap
+      if (menu && menu.bm) {
+        document.getElementById('title').textContent = menu.bm.metadata.title || "En attente d'osu!...";
+        var artist = menu.bm.metadata.artist || '';
+        var mapper = menu.bm.metadata.mapper ? ' — ' + menu.bm.metadata.mapper : '';
+        document.getElementById('artist').textContent = artist + mapper;
+        var sr = menu.bm.stats && menu.bm.stats.SR ? parseFloat(menu.bm.stats.SR).toFixed(2) : null;
+        document.getElementById('stars').textContent = sr ? '⭐ ' + sr : '⭐ —';
+      }
+
+      // Gameplay
+      if (gp) {
+        var pp  = gp.pp ? Math.round(gp.pp.current) : null;
+        var cmb = gp.combo ? gp.combo.current : null;
+        var acc = gp.accuracy != null ? parseFloat(gp.accuracy).toFixed(2) : null;
+        var grade = gp.hits ? gp.hits.grade : null;
+        document.getElementById('pp').textContent    = pp  != null ? pp + 'pp' : '—';
+        document.getElementById('combo').textContent = cmb != null ? 'x' + cmb  : '—';
+        document.getElementById('acc').textContent   = acc != null ? acc + '%'  : '—';
+        document.getElementById('acc-label').textContent = acc != null ? acc + '%' : '—';
+        document.getElementById('acc-bar').style.width   = acc != null ? acc + '%' : '0%';
+        if (grade) {
+          var el = document.getElementById('grade');
+          el.textContent = grade;
+          el.className = 'grade ' + grade;
+        }
+      }
+    } catch(err) {}
+  };
+  ws.onclose = function() { setTimeout(connect, 3000); };
+}
+connect();
+</script>
+</body>
+</html>
